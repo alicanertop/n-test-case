@@ -1,0 +1,102 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "es6": true
+  },
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "airbnb-typescript",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "eslint:recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": "latest",
+    "project": "./tsconfig.json",
+    "ecmaFeatures": { "jsx": true }
+  },
+  "plugins": ["react", "@typescript-eslint", "import", "simple-import-sort"],
+  "settings": {
+    "import/parsers": { "@typescript-eslint/parser": [".ts", ".tsx"] },
+    "import/resolver": { "node": { "paths": ["src"] } }
+  },
+  "rules": {
+    "no-shadow": "off",
+    "no-bitwise": "off",
+    "no-plusplus": "off",
+    "default-case": "off",
+    "import/first": "error",
+    "no-unused-vars": "off",
+    "import/no-cycle": "off",
+    "no-return-assign": "warn",
+    "consistent-return": "off",
+    "no-param-reassign": "off",
+    "at-rule-no-unknown": "off",
+    "import/no-duplicates": "error",
+    "prefer-regex-literals": "warn",
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/rules-of-hooks": "off",
+    "no-async-promise-executor": "warn",
+    "react/require-default-props": "off",
+    "prefer-promise-reject-errors": "off",
+    "@typescript-eslint/ban-types": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "@typescript-eslint/camelcase": "off",
+    "import/prefer-default-export": "off",
+    "react/jsx-props-no-spreading": "off",
+    "import/newline-after-import": "error",
+    "react/jsx-no-useless-fragment": "warn",
+    "arrow-body-style": ["warn", "as-needed"],
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-expressions": 2,
+    "@typescript-eslint/naming-convention": "warn",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "@typescript-eslint/default-param-last": "warn",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "no-use-before-define": ["error", { "variables": false }],
+    "no-unused-expressions": ["warn", { "allowTernary": true }],
+    "@typescript-eslint/no-shadow": ["warn", { "ignoreTypeValueShadow": true }],
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
+  },
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx", "*.ts", "*.tsx"],
+      "rules": {
+        "simple-import-sort/exports": "error",
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              // Packages `react` related packages after react.
+              ["^(react)(?![-])"],
+              // Packages non related react.
+              ["^@", "^\\w"],
+              // chakra-ui
+              ["^@chakra-ui", "^\\w"],
+              //components etc..
+              [
+                "^(assets|config|components|const|containers|hoc|hooks|json|helpers|store|pages|services|styles|types)"
+              ],
+              // Parent imports. Put `..` last. Other relative imports. Put same-folder imports and `.` last.
+              ["^\\.\\.(?!/?$)", "^\\.\\./?$", "^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+              // Style imports.
+              ["^.+\\.?(css|scss)$"]
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
