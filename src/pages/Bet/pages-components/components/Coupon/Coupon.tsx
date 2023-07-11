@@ -1,17 +1,22 @@
-import { useMemo } from 'react'
+/* eslint-disable react/button-has-type */
 
-import { useCtxState } from '../../context'
+import { ICouponItems } from 'types/ICouponItems'
+
+import { useCtxDispatch, useCtxState } from '../../context'
 
 export function Coupon() {
+  const ctxDispatch = useCtxDispatch()
   const couponItems = useCtxState('couponItems')
-  const total = useMemo(
-    () =>
-      couponItems.reduce(
-        ($total, couponItem) => Number((Number(couponItem.OC.O) * $total).toFixed(2)),
-        1
-      ),
-    [couponItems]
+
+  const onDeleteCoupon = (couponItem: ICouponItems) => () => {
+    ctxDispatch({ type: 'HANDLE_COUPON_ITEM', payload: couponItem })
+  }
+
+  const total = couponItems.reduce(
+    ($total, couponItem) => Number((Number(couponItem.OC.O) * $total).toFixed(2)),
+    1
   )
+
   if (!couponItems.length) return
 
   return (
@@ -22,6 +27,9 @@ export function Coupon() {
           <div className="px-2">Kod: {couponItem.C}</div>
           <div>Maç: {couponItem.N}</div>
           <div className="pl-2 font-bold">Oran: {couponItem.OC.O}</div>
+          <button onClick={onDeleteCoupon(couponItem) as any} className="pl-2 cursor-pointer">
+            X
+          </button>
         </div>
       ))}
 

@@ -1,26 +1,19 @@
-import { useState } from 'react'
-
 import { IBet, IOC } from 'types'
 
-import { useCtxDispatch } from '../../context'
+import { useCtxDispatch, useCtxState } from '../../context'
 import { getOCData } from '../../utils'
 import { BetColumn } from '../BetColumn/BetColumn'
 
 const customOC99 = { G: '2', ID: '99', IMF: false, MBS: '4', N: '+99', O: '3', OD: 0 }
 
 export function BetListItem({ bet }: { bet: IBet }) {
-  const [selectedOCKey, setselectedOCKey] = useState<string | undefined>(undefined)
   const ctxDispatch = useCtxDispatch()
+  const couponItems = useCtxState('couponItems')
+  const selectedOCKey = couponItems.find((couponItem) => couponItem.C === bet.C)?.OC.ID
 
   const selectOodRatio = (OCGKey: string, OCKey: string, customOC?: IOC) => {
     const ocData = customOC || getOCData(bet.OCG, OCGKey, OCKey)
     ctxDispatch({ type: 'HANDLE_COUPON_ITEM', payload: { OC: ocData, C: bet.C, N: bet.N } })
-
-    if (selectedOCKey === OCKey) {
-      setselectedOCKey(undefined)
-    } else {
-      setselectedOCKey(OCKey)
-    }
   }
 
   return (

@@ -1,38 +1,31 @@
-import { useCallback, useRef, useState } from 'react'
-
-import { useIntersectionObserver } from 'hooks'
-import { IBet } from 'types'
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable react/jsx-no-bind */
+import List from 'react-virtualized/dist/es/List'
 
 import { useCtxState } from '../../context'
 import { BetListItem } from '../BetListItem/BetListItem'
 
-const perIndexCount = 10
-
 export function BetList() {
   const bets = useCtxState('bets')
 
-  const currentIndex = useRef<number>(0)
-  const [currentBets, setCurrentBets] = useState<IBet[]>([])
-
-  const onIntersect = useCallback(
-    (intersectionObserverEntry: IntersectionObserverEntry[]) => {
-      if (!bets.length || !intersectionObserverEntry[0].isIntersecting) return
-      currentIndex.current = Math.min(++currentIndex.current, bets.length / perIndexCount)
-      setCurrentBets(bets.slice(0, Math.min(perIndexCount * currentIndex.current)))
-    },
-    [bets]
-  )
-
-  const [intersecRef] = useIntersectionObserver({ onIntersect })
+  function rowRenderer({ key, index }: any) {
+    const bet = bets[index]
+    return (
+      <div key={key}>
+        <BetListItem key={bet.C} bet={bet} />
+      </div>
+    )
+  }
 
   return (
-    <>
-      <div className="mt-[56px]">
-        {currentBets.map((bet) => (
-          <BetListItem key={bet.C} bet={bet} />
-        ))}
-      </div>
-      <div ref={intersecRef} />
-    </>
+    <div className="mt-[56px]">
+      <List
+        width={document.body.clientWidth}
+        height={1080}
+        rowCount={bets.length}
+        rowHeight={20}
+        rowRenderer={rowRenderer}
+      />
+    </div>
   )
 }
