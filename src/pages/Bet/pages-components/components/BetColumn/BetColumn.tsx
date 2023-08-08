@@ -1,7 +1,8 @@
 import { CSSProperties, ReactNode } from 'react'
 
-import { IOC, IOCG } from 'types'
+import { IBet, IOC, IOCG } from 'types'
 
+import { useCtxDispatch, useCtxState } from '../../context'
 import { getOCData } from '../../utils'
 
 type IBetColumn = {
@@ -12,32 +13,27 @@ type IBetColumn = {
   OCGKey?: string
   OCKey?: string
   customOC?: IOC
-  selectedOCKey?: string
-  selectOodRatio?: (OCGKey: string, OCKey: string, customOC?: IOC) => void
+  bet?: IBet
 }
-export function BetColumn({
-  topElement,
-  bottomElement,
-  OCG,
-  OCGKey,
-  OCKey,
-  selectedOCKey,
-  selectOodRatio,
-  customOC,
-  parentStyle
-}: IBetColumn) {
-  const isSelected =
-    ((selectedOCKey === OCKey || customOC?.ID === OCKey) && OCKey) ||
-    (customOC?.ID === selectedOCKey && customOC)
+export function BetColumn(
+  { topElement, bottomElement, OCG, OCGKey, OCKey, bet, customOC, parentStyle }: IBetColumn
+) {
+  const ctxDispatch = useCtxDispatch()
+  const OCData = OCG && OCGKey && OCKey ? getOCData(OCG, OCGKey, OCKey) : customOC ?? undefined
 
-  const OCData = OCG && OCGKey && OCKey ? getOCData(OCG, OCGKey, OCKey) : undefined
+  const isSelected = useCtxState((state) => {
+    const selectedOCKey = state.couponItems.find((couponItem) => couponItem.C === bet?.C)?.OC.ID
 
-  const onOodClick = () => {
-    if (OCGKey && OCKey) {
-      selectOodRatio?.(OCGKey, OCKey)
-    } else if (customOC) {
-      selectOodRatio?.(customOC.ID, customOC.ID, customOC)
-    }
+    return Boolean(
+      ((selectedOCKey === OCKey || customOC?.ID === OCKey) && OCKey) ||
+        (customOC?.ID === selectedOCKey && customOC)
+    )
+  })
+
+  const selectOodRatio = () => {
+    if (!bet || !OCData) return
+
+    ctxDispatch({ type: 'HANDLE_COUPON_ITEM', payload: { OC: OCData, C: bet.C, N: bet.N } })
   }
 
   return (
@@ -53,10 +49,10 @@ export function BetColumn({
       </div>
       <div
         className={`flex items-center pr-1 border-black border-r-2 border-t-2 border-b-2 min-h-[56px] w-full ${
-          selectOodRatio ? 'cursor-pointer' : ''
+          bet ? 'cursor-pointer' : ''
         }`}
         style={isSelected ? { backgroundColor: 'yellow' } : {}}
-        onClick={onOodClick}>
+        onClick={selectOodRatio}>
         {customOC?.O || OCData?.O ? (
           <div className="w-full flex justify-center">
             <div>{customOC?.O || OCData?.O}</div>
