@@ -1,4 +1,6 @@
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 
 const { defaultConfigs, port, isDev } = require('./webpack.config.default')
 
@@ -35,7 +37,21 @@ const webpackProdConfig = {
           chunks: 'all'
         }
       }
-    }
+    },
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+        terserOptions: {
+          output: {
+            comments: false
+          },
+          compress: {
+            drop_console: true
+          }
+        }
+      }),
+      new CssMinimizerPlugin()
+    ]
   }
 }
 
