@@ -6,7 +6,7 @@ import { useCtxDispatch, useCtxState } from '../../context'
 
 export function Coupon() {
   const ctxDispatch = useCtxDispatch()
-  const couponItems = useCtxState('couponItems')
+  const couponItems = useCtxState((state) => state.couponItems)
 
   const onDeleteCoupon = (couponItem: ICouponItems) => () => {
     ctxDispatch({ type: 'HANDLE_COUPON_ITEM', payload: couponItem })

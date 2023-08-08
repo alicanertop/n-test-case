@@ -6,7 +6,7 @@ import { useCtxState } from '../../context'
 import { BetListItem } from '../BetListItem/BetListItem'
 
 export function BetList() {
-  const bets = useCtxState('bets')
+  const bets = useCtxState((state) => state.bets)
 
   function rowRenderer({ key, index }: any) {
     const bet = bets[index]

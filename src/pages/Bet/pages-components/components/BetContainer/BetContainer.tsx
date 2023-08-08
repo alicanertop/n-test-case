@@ -10,7 +10,7 @@ import { Coupon } from '../Coupon/Coupon'
 
 export function BetContainer() {
   const ctxDispatch = useCtxDispatch()
-  const betsCount = useCtxState('betsCount')
+  const betsCount = useCtxState((state) => state.betsCount)
 
   useEffect(() => {
     instance
