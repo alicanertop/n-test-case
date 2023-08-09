@@ -1,9 +1,9 @@
 import { createContext } from 'services/createContext'
 
-import { initialState, reducer } from './reducer'
+import { dispatch } from './dispatch'
+import { state } from './state'
 
-const { CtxProvider, useCtxAllState, useCtxDispatch, useCtxState } = createContext(
-  reducer,
-  initialState
-)
-export { CtxProvider, useCtxAllState, useCtxDispatch, useCtxState }
+export * from './state'
+
+const { CtxProvider, useCtxState } = createContext(state)
+export { dispatch as ctxDispatch, CtxProvider, useCtxState }

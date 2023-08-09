@@ -1,40 +1,59 @@
 import {
   createContext as createCtx,
-  Dispatch,
   PropsWithChildren,
-  Reducer,
+  useCallback,
   useContext,
-  useReducer
+  useRef,
+  useSyncExternalStore
 } from 'react'
 
-export function createContext<StateType, ActionType>(
-  reducer: Reducer<StateType, ActionType>,
-  initialState: StateType
-) {
-  const defaultDispatch: Dispatch<ActionType> = () => initialState
-  const stateCtx = createCtx(initialState)
-  const dispatchCtx = createCtx(defaultDispatch)
+type ISubscribeCb = (callback: () => void) => () => void
 
-  const useCtxAllState = () => useContext(stateCtx)
-  const useCtxDispatch = () => useContext(dispatchCtx)
+export function createContext<State>(initialState: State & { subscribe?: ISubscribeCb }) {
+  const useStoreData = (): {
+    get: () => State
+    subscribe: ISubscribeCb
+  } => {
+    const store = useRef(initialState)
+    const subscribers = useRef(new Set<() => void>())
 
-  // /** Only one depth selector for comparison */
-  // function useCtxState<K extends keyof StateType>(property: K) {
-  //   return useContext(stateCtx)[property]
-  // }
+    const get = useCallback(() => store.current, [])
 
-  /** Using selector to index data */
-  function useCtxState<SO>(selector: (state: StateType) => SO) {
-    return selector(useContext(stateCtx))
+    const subscribe = useCallback((callback: () => void) => {
+      if (typeof initialState?.subscribe === 'function') {
+        initialState.subscribe(callback)
+      } else {
+        subscribers.current.add(callback)
+      }
+
+      return () => {
+        subscribers.current.delete(callback)
+      }
+    }, [])
+
+    return { get, subscribe }
+  }
+
+  type IStoreDataReturnType = ReturnType<typeof useStoreData>
+
+  const stateCtx = createCtx<IStoreDataReturnType | undefined>(undefined)
+  const ctxStore = () => useContext(stateCtx)
+
+  function useCtxState<StoreReturn>(selector: (store: State) => StoreReturn): StoreReturn {
+    const store = ctxStore()
+    if (!store) throw new Error('Store not found')
+
+    const state = useSyncExternalStore(
+      store.subscribe,
+      () => selector(store.get()),
+      () => selector(initialState)
+    )
+    return state
   }
 
   function CtxProvider({ children }: PropsWithChildren<{}>) {
-    const [state, dispatch] = useReducer<Reducer<StateType, ActionType>>(reducer, initialState)
-    return (
-      <dispatchCtx.Provider value={dispatch}>
-        <stateCtx.Provider value={state}>{children}</stateCtx.Provider>
-      </dispatchCtx.Provider>
-    )
+    return <stateCtx.Provider value={useStoreData()}>{children}</stateCtx.Provider>
   }
-  return { useCtxState, useCtxAllState, useCtxDispatch, CtxProvider } as const
+
+  return { useCtxState, CtxProvider } as const
 }

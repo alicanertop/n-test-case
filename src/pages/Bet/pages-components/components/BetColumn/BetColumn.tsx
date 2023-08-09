@@ -2,7 +2,7 @@ import { CSSProperties, ReactNode } from 'react'
 
 import { IBet, IOC, IOCG } from 'types'
 
-import { useCtxDispatch, useCtxState } from '../../context'
+import { ctxDispatch, state } from '../../context'
 import { getOCData } from '../../utils'
 
 type IBetColumn = {
@@ -18,22 +18,21 @@ type IBetColumn = {
 export function BetColumn(
   { topElement, bottomElement, OCG, OCGKey, OCKey, bet, customOC, parentStyle }: IBetColumn
 ) {
-  const ctxDispatch = useCtxDispatch()
   const OCData = OCG && OCGKey && OCKey ? getOCData(OCG, OCGKey, OCKey) : customOC ?? undefined
 
-  const isSelected = useCtxState((state) => {
-    const selectedOCKey = state.couponItems.find((couponItem) => couponItem.C === bet?.C)?.OC.ID
+  const isSelected = () => {
+    const selectedOCKey = state.couponItems.value.find((couponItem) => couponItem.C === bet?.C)?.OC
+      .ID
 
     return Boolean(
       ((selectedOCKey === OCKey || customOC?.ID === OCKey) && OCKey) ||
         (customOC?.ID === selectedOCKey && customOC)
     )
-  })
+  }
 
   const selectOodRatio = () => {
     if (!bet || !OCData) return
-
-    ctxDispatch({ type: 'HANDLE_COUPON_ITEM', payload: { OC: OCData, C: bet.C, N: bet.N } })
+    ctxDispatch.HANDLE_COUPON_ITEM({ OC: OCData, C: bet.C, N: bet.N })
   }
 
   return (
@@ -51,7 +50,7 @@ export function BetColumn(
         className={`flex items-center pr-1 border-black border-r-2 border-t-2 border-b-2 min-h-[56px] w-full ${
           bet ? 'cursor-pointer' : ''
         }`}
-        style={isSelected ? { backgroundColor: 'yellow' } : {}}
+        style={isSelected() ? { backgroundColor: 'yellow' } : {}}
         onClick={selectOodRatio}>
         {customOC?.O || OCData?.O ? (
           <div className="w-full flex justify-center">

@@ -1,6 +1,7 @@
 import { BetHeaderItem } from '../BetHeaderItem/BetHeaderItem'
+import { Test } from './Test'
 
-export function BetListHeader({ betCount }: { betCount: number }) {
+export function BetListHeader({ betCount = 0 }: { betCount?: number }) {
   return (
     <div className="flex text-center fixed bg-gray-400 top-0">
       <BetHeaderItem parentStyle={{ width: '365px' }}>Total Event Count: {betCount}</BetHeaderItem>
@@ -27,6 +28,8 @@ export function BetListHeader({ betCount }: { betCount: number }) {
       <BetHeaderItem>Var</BetHeaderItem>
       <BetHeaderItem>Yok</BetHeaderItem>
       <BetHeaderItem>99</BetHeaderItem>
+
+      <Test />
     </div>
   )
 }

@@ -2,11 +2,11 @@
 /* eslint-disable react/jsx-no-bind */
 import List from 'react-virtualized/dist/es/List'
 
-import { useCtxState } from '../../context'
+import { state } from '../../context'
 import { BetListItem } from '../BetListItem/BetListItem'
 
 export function BetList() {
-  const bets = useCtxState((state) => state.bets)
+  const bets = state.bets.value
 
   function rowRenderer({ key, index }: any) {
     const bet = bets[index]

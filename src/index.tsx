@@ -9,9 +9,9 @@ import './styles/index.scss'
 
 function Index() {
   return (
-    <StrictMode>
-      <RouterProvider router={router} />
-    </StrictMode>
+    // <StrictMode>
+    <RouterProvider router={router} />
+    // </StrictMode>
   )
 }
 
