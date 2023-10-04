@@ -11,7 +11,7 @@
     "predeploy": "yarn && yarn build",
     "deploy": "gh-pages -d build",
     "test": "echo 'test works'",
-    "prepare": "cd ../../../../../.. && husky install WebProjects/Nesine.StaticContent/Nesine.StaticContent/www/nsn-react/src/.husky",
+    "prepare": "husky install .husky",
     "pre-commit": "yarn test --onlyChanged"
   },
   "dependencies": {
